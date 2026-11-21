@@ -14,6 +14,24 @@ NexSync is a collaborative writing MVP using React, TipTap, Yjs, FastAPI, Postgr
 
 The API verifies Firebase ID tokens with Firebase Admin when service-account/ADC credentials are configured. For local sign-in and document APIs without an Admin credential, it verifies Firebase tokens against Google's public signing certificates and the configured project audience. Admin credentials are required for Firebase Admin operations such as sharing by email. Realtime Database presence is optional: set `FIREBASE_DATABASE_URL`, deploy `firebase.database.rules.json`, and set the matching `VITE_FIREBASE_DATABASE_URL`; otherwise the UI falls back to live socket presence.
 
+## Try the project brief's core workflow
+
+1. Sign in, select **Create your first document** (or **New document** in the sidebar), and enter some text in the editor.
+2. Open the same document in another signed-in browser window. Edits are exchanged as Yjs updates and should converge in both editors; presence shows connected collaborators.
+3. The **Writing assistant** is the right-hand panel inside an open document. If it is hidden, use the panel toggle in the editor toolbar. Add headings to the document, then ask for example: `Rewrite section 3 in a clearer tone.` The assistant returns a proposal for review; select **Apply suggestion** to insert it.
+4. Keep typing while the proposal is being generated. The editor remains available. Applying a proposal is blocked if its captured target text has changed, so the assistant does not replace newer text with a stale rewrite. Review/copy the proposal and retry if it is blocked.
+
+The MVP demonstrates the brief's shared-document and stale-AI-edit protections. It is an engineering prototype, not a claim that the 20,000-document or 100-editor targets have been measured: those targets still need load and failure testing before production use.
+
+## Design note: growing toward 20,000 documents and 100 editors
+
+- Keep the FastAPI collaboration API stateless across instances and put WebSocket instances behind a load balancer; use Redis Pub/Sub for live cross-instance fanout.
+- Persist each idempotent Yjs update in PostgreSQL before acknowledging or broadcasting it. Redis carries live events only, so reconnect recovery comes from a snapshot plus the durable update log.
+- Partition/index document-scoped updates and membership records as volume grows, and compact old updates into Yjs snapshots to bound reconnect work and storage overhead.
+- Bound per-connection send queues and apply backpressure so one slow editor cannot stall a hot document room. Measure room sizes and fanout latency at 100 editors before selecting production limits.
+- Store presence separately in Firebase Realtime Database, with one expiring connection record per browser tab; keep document content and authorization in the API/database path.
+- Isolate higher-volume AI calls behind a durable worker queue with per-user quotas and retries. The MVP calls Groq asynchronously from the API and applies only a reviewable, source-checked suggestion.
+
 ### Docker Compose
 
 Copy `.env.example` to `.env`, add a Firebase Admin service account file at `firebase-admin.json`, configure the Firebase Realtime Database URL and Groq key, then run `docker compose up --build`. Docker Compose provides PostgreSQL and Redis. It was not started in this environment because Docker Desktop's Linux engine was unavailable; the local API/UI path is the available way to preview it here.
