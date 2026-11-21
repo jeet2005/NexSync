@@ -1,0 +1,33 @@
+{
+  "name": "nexsync",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tiptap/extension-collaboration": "^2.11.5",
+    "@tiptap/extension-collaboration-cursor": "^2.11.5",
+    "@tiptap/extension-placeholder": "^2.11.5",
+    "@tiptap/react": "^2.11.5",
+    "@tiptap/starter-kit": "^2.11.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "firebase": "^11.10.0",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "y-prosemirror": "^1.2.12",
+    "y-protocols": "^1.0.6",
+    "yjs": "^13.6.24"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vitest": "^3.0.5"
+  }
+}

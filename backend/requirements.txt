@@ -1,0 +1,11 @@
+fastapi==0.115.12
+uvicorn[standard]==0.34.0
+sqlalchemy==2.0.38
+alembic==1.15.1
+pydantic-settings==2.8.1
+psycopg[binary]==3.2.6
+httpx==0.28.1
+pytest==8.3.5
+firebase-admin==6.7.0
+redis==5.2.1
+y-py==0.6.2

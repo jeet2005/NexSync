@@ -1,0 +1,20 @@
+{
+  "rules": {
+    "documentAccess": {
+      ".read": false,
+      ".write": false
+    },
+    "presence": {
+      "documents": {
+        "$documentId": {
+          "users": {
+            ".read": "auth != null && root.child('documentAccess').child($documentId).child(auth.uid).val() == true",
+            "$userId": {
+              ".write": "auth != null && auth.uid == $userId && root.child('documentAccess').child($documentId).child(auth.uid).val() == true"
+            }
+          }
+        }
+      }
+    }
+  }
+}

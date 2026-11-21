@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+workspace.db
+node_modules/
+dist/
+.env
+.firebase-admin.json
+firebase-admin.json
+*service-account*.json
