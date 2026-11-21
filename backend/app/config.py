@@ -4,7 +4,7 @@ from pathlib import Path
 class Settings(BaseSettings):
     database_url: str = "sqlite:///./workspace.db"
     groq_api_key: str = ""
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "openai/gpt-oss-120b"
     ai_api_key: str = ""
     ai_base_url: str = "https://api.groq.com/openai/v1"
     ai_model: str = ""

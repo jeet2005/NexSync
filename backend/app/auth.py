@@ -6,11 +6,13 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth as firebase_auth
 from firebase_admin import credentials
 from google.auth.transport.requests import Request
-from google.oauth2 import id_token
+from google.oauth2.id_token import verify_firebase_token
+import logging
 
 from .config import settings
 
 bearer = HTTPBearer(auto_error=False)
+log = logging.getLogger("workspace.auth")
 
 @lru_cache(maxsize=1)
 def firebase_app():
@@ -35,6 +37,7 @@ def current_user(credentials_header: HTTPAuthorizationCredentials | None = Depen
     except HTTPException:
         raise
     except Exception as exc:
+        log.warning("Firebase token verification rejected a request (%s): %s", type(exc).__name__, str(exc)[:180])
         raise HTTPException(status_code=401, detail="Invalid or expired Firebase ID token") from exc
     uid = token.get("uid") or token.get("user_id") or token.get("sub")
     if not uid:
@@ -45,7 +48,8 @@ def verify_id_token(token: str) -> dict:
     try:
         return firebase_auth.verify_id_token(token, app=firebase_app())
     except HTTPException as exc:
-        if exc.status_code != 503: raise
-        # Local MVP fallback: Google Auth validates Firebase signature, expiry, issuer and audience
-        # using Google's public certificates. Admin credentials remain required for Admin APIs.
-        return id_token.verify_firebase_token(token, Request(), audience=settings.firebase_project_id)
+        if exc.status_code != 503:
+            raise
+        # Local MVP fallback when no Admin service-account credential is installed.
+        # Permit a small clock skew between Firebase and a developer PC.
+        return verify_firebase_token(token, Request(), audience=settings.firebase_project_id, clock_skew_in_seconds=60)
