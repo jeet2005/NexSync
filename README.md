@@ -2,6 +2,8 @@
 
 NexSync is a collaborative writing MVP using React, TipTap, Yjs, FastAPI, PostgreSQL, Firebase Authentication/Realtime Database presence, Redis Pub/Sub, and Groq-compatible chat completions. The editor syncs incremental Yjs updates. AI returns a reviewable suggestion and the UI applies it only while the captured target text is unchanged.
 
+[![Architecture diagram of jeet2005/nexsync](https://gitdiagram.com/jeet2005/nexsync/diagram.png)](https://gitdiagram.com/jeet2005/nexsync?utm_source=readme&utm_medium=picture)
+
 ## Run it on a developer PC
 
 ### Local services (no Docker required)
